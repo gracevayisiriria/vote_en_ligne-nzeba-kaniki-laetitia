@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Résultats de Vote en Temps Réel</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        .container { width: 50%; margin: auto; }
+        .btn-vote { padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>Résultats du Vote en Direct</h1>
+    <p><a href="https://docs.google.com/forms/d/e/1FAIpQLScgYoG9rYnH0qE2VkqEHT_mitL3JJyT1XIPCSFK2oafYyWSNA/viewform" class="btn-vote" target="_blank">Cliquez ici pour voter</a></p>
+    
+    <div class="container">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        // REMPLACEZ PAR VOTRE URL APPS SCRIPT
+        const API_URL = "https://script.google.com/macros/s/AKfycbwRxwxmeEEwQo8OpQT05tbhZO3974BHfmF4EZhqvgCConf_XbAkoF8CNlQBKPQ7dNyc/exec";
+
+        async function updateChart() {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            
+            // Si le graphique existe déjà, on le détruit pour le recréer à jour
+            if (window.chartInstance) { window.chartInstance.destroy(); }
+
+            window.chartInstance = new Chart(ctx, {
+                type: 'pie', // Vous pouvez changer par 'bar'
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nombre de voix',
+                        data: values,
+                        backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56']
+                    }]
+                }
+            });
+        }
+
+        // Charger le graphique au démarrage
+        updateChart();
+    </script>
+</body>
+</html>
